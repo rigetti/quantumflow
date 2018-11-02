@@ -12,6 +12,7 @@ __pycache__/
 devnotes*
 junk
 build
+dist
 .pytest_cache/
 .tox/
 .eggs/

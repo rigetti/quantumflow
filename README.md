@@ -1,10 +1,8 @@
+>Notice: This is research code that will not necessarily be maintained to
+>support further releases of Forest and other Rigetti Software. We welcome
+>bug reports and PRs but make no guarantee about fixes or responses.
 
 # QUANTUMFLOW: A Quantum Algorithms Development Toolkit
-
-Notice: This is research code that will not necessarily be maintained to
-support further releases of Forest and other Rigetti Software. We welcome
-bug reports and PRs but make no guarantee about fixes or responses.
-
 
 ## Installation for development
 ```

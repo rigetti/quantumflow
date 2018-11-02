@@ -1,0 +1,23 @@
+# QuantumFlow build, run, and test 
+
+numpy
+scipy               >= 1.0.0
+tensorflow          >= 1.6.0
+torch
+torchvision
+networkx            >= 2.1
+sphinx              >= 1.6.6
+sphinx_rtd_theme
+pytest              >= 2.6.0
+pytest-cov
+flake8
+tox
+mypy
+pillow
+keras
+matplotlib
+pillow
+pyquil	            >= 2.0.0b1
+antlr4-python3-runtime
+cvxpy
+sympy

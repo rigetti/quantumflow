@@ -1,0 +1,9 @@
+# Classical logic instructions
+
+TRUE [4]
+FALSE [2]
+AND [1] [0]
+OR [2] [1]
+MOVE [0] [3]
+EXCHANGE [3] [4]
+

@@ -1,0 +1,20 @@
+
+# Configuration file for code coverage
+#
+# https://coverage.readthedocs.io/
+#
+# Run test coverage with ``make coverage``
+#
+# Use ``# pragma: no cover`` to exclude specific lines
+#
+
+# .toxcoverage used to configure coverage for tox testing.
+# Exclude backends (which can't all get 100% coverage)???
+
+[run]
+omit = quantumflow/backend/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    from quantumflow.backend.

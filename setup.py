@@ -38,7 +38,7 @@ setup(
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: Apache Software License',
-        'Topic :: Scientific/Engineering :: Quantum Computing',
+        'Topic :: Scientific/Engineering',
         'Programming Language :: Python',
         'Natural Language :: English',
         'Topic :: Software Development :: Libraries',

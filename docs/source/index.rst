@@ -13,8 +13,10 @@ using (stochastic) gradient descent. The torch and tensorflow backend can also a
 quantum simulation using commodity classical GPUs.
 
 Notice: This is research code that will not necessarily be maintained to support further
-releases of Forest and other Rigetti Software. We welcome bug reports and PRs but make no
-guarantee about fixes or responses.
+releases of Forest and other like `Rigetti <https://rigetti.com>`_ Software. We welcome bug reports
+and PRs but make no guarantee about fixes or responses.
+
+Please refer to the github repository https://github.com/rigetticomputing/quantumflow for source code, and to submit issues and pull requests. Documentation is hosted at readthedocs https://quantumflow.readthedocs.io/ .
 
 
 .. toctree::

@@ -38,8 +38,8 @@ Gate decompositions
 .. autofunction:: canonical_coords
 
 
-Visulizations
-#############
+Visualizations
+##############
 
 .. autofunction:: circuit_to_latex
 .. autofunction:: render_latex

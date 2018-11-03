@@ -10,14 +10,14 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
 test:		## Run unittests with current backend
-	pytest tests/
+	pytest --disable-pytest-warnings tests/
 
 testall:	## Run full tox build and test
 	tox
 
 coverage:	## Report test coverage using current backend
 	@echo
-	pytest --cov=quantumflow --cov-report term-missing tests/
+	pytest --disable-pytest-warnings --cov=quantumflow --cov-report term-missing tests/
 	@echo
 	@echo "** Note: Only active backend will have full test coverage **"
 	@echo

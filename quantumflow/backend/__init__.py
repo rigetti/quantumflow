@@ -12,13 +12,13 @@ from .numpybk import set_random_seed as np_set_random_seed
 
 
 if BACKEND == 'tensorflow':
-    from quantumflow.backend.tensorflowbk import *            # noqa: F403
+    from quantumflow.backend.tensorflowbk import *  # noqa: F403,E501  # pragma: no cover
 elif BACKEND == 'eager':
-    from quantumflow.backend.eagerbk import *                 # noqa: F403
+    from quantumflow.backend.eagerbk import *       # noqa: F403,E501  # pragma: no cover
 elif BACKEND == 'torch':
-    from quantumflow.backend.torchbk import *                 # noqa: F403
+    from quantumflow.backend.torchbk import *       # noqa: F403,E501  # pragma: no cover
 else:
-    from quantumflow.backend.numpybk import *                 # noqa: F403
+    from quantumflow.backend.numpybk import *       # noqa: F403,E501  # pragma: no cover
 
 __all__ = ['BKTensor', 'CTYPE', 'DEVICE', 'FTYPE', 'MAX_QUBITS', 'TENSOR',
            'TL', 'TensorLike', 'absolute', 'arccos', 'astensor',
@@ -32,4 +32,4 @@ __all__ = ['BKTensor', 'CTYPE', 'DEVICE', 'FTYPE', 'MAX_QUBITS', 'TENSOR',
 
 if SEED is not None:               # pragma: no cover
     np_set_random_seed(SEED)
-    set_random_seed(SEED)                                     # noqa: F405
+    set_random_seed(SEED)          # noqa: F405

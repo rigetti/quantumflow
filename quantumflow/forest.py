@@ -8,13 +8,14 @@
 Quantumflow: Interface to pyQuil and the Rigetti Forest
 """
 
-from typing import Sequence
+from typing import Sequence, Dict
 
 import networkx as nx
 import PIL
 import numpy as np
 
 from .cbits import Register
+from .qubits import Qubit
 from .states import State
 from .stdgates import STDGATES
 from .ops import Gate
@@ -127,7 +128,9 @@ class NullCompiler(pyquil.AbstractCompiler):
         return nq_program
 
 
-def qvm_run_and_measure(circ: Circuit, trials: int = 1) -> np.ndarray:
+def qvm_run_and_measure(circ: Circuit, trials: int = 1) \
+        -> Dict[Qubit, np.ndarray]:  # pragma: no cover
+    # Tests only run if qvm and quilc are installed locally.
     N = circ.qubit_nb
 
     vqc = get_virtual_qc(N, compiler=NullCompiler())

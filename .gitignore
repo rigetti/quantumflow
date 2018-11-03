@@ -7,11 +7,10 @@ __pycache__/
 .DS_Store
 .cache
 .mypy_cache
-.coverage*
-
-devnotes*
+devnotes
 junk
 build
+_build
 dist
 .pytest_cache/
 .tox/

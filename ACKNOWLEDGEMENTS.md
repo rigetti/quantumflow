@@ -25,7 +25,7 @@ were all adapted from his reference-qvm [2].
 Gavin E. Crooks (2018-11-01)
 
 
-.. [1]  A Practical Quantum Instruction Set Architecture
+   [1]  A Practical Quantum Instruction Set Architecture
         Robert S. Smith, Michael J. Curtis, William J. Zeng
         arXiv:1608.03355 https://arxiv.org/abs/1608.03355
 

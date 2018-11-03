@@ -11,14 +11,14 @@ from quantumflow.config import BACKEND, SEED
 from .numpybk import set_random_seed as np_set_random_seed
 
 
-if BACKEND == 'tensorflow':
-    from quantumflow.backend.tensorflowbk import *  # noqa: F403,E501  # pragma: no cover
-elif BACKEND == 'eager':
-    from quantumflow.backend.eagerbk import *       # noqa: F403,E501  # pragma: no cover
-elif BACKEND == 'torch':
-    from quantumflow.backend.torchbk import *       # noqa: F403,E501  # pragma: no cover
-else:
-    from quantumflow.backend.numpybk import *       # noqa: F403,E501  # pragma: no cover
+if BACKEND == 'tensorflow':                         # pragma: no cover
+    from quantumflow.backend.tensorflowbk import *  # noqa: F403
+elif BACKEND == 'eager':                            # pragma: no cover
+    from quantumflow.backend.eagerbk import *       # noqa: F403
+elif BACKEND == 'torch':                            # pragma: no cover
+    from quantumflow.backend.torchbk import *       # noqa: F403
+else:                                               # pragma: no cover
+    from quantumflow.backend.numpybk import *       # noqa: F403
 
 __all__ = ['BKTensor', 'CTYPE', 'DEVICE', 'FTYPE', 'MAX_QUBITS', 'TENSOR',
            'TL', 'TensorLike', 'absolute', 'arccos', 'astensor',

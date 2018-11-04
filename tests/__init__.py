@@ -9,6 +9,7 @@ Unit tests for QuantumFlow
 """
 import sys
 import pytest
+import shutil
 
 from quantumflow.config import TOLERANCE
 import quantumflow.backend as bk
@@ -37,3 +38,7 @@ skip_windows = pytest.mark.skipif(
 skip_torch = pytest.mark.skipif(
     bk.BACKEND == 'torch',
     reason="Unsupported backend")
+
+skip_unless_pdflatex = pytest.mark.skipif(
+    shutil.which('pdflatex') is None or shutil.which('pdftocairo') is None,
+    reason='Necessary external dependencies not installed')

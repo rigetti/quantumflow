@@ -161,11 +161,11 @@ def test_diamond_norm():
     # https://github.com/qutip/qutip/blob/master/qutip/tests/test_metrics.py
     # which were in turn  generated using QuantumUtils for MATLAB
     # (https://goo.gl/oWXhO9)
-
+    RTOL = 0.01
     chan0 = qf.I(0).aschannel()
     chan1 = qf.X(0).aschannel()
     dn = qf.diamond_norm(chan0, chan1)
-    assert np.isclose(2.0, dn, rtol=0.0001)
+    assert np.isclose(2.0, dn, rtol=RTOL)
 
     turns_dnorm = [[1.000000e-03, 3.141591e-03],
                    [3.100000e-03, 9.738899e-03],
@@ -179,7 +179,7 @@ def test_diamond_norm():
         chan1 = qf.TX(turns).aschannel()
 
         dn = qf.diamond_norm(chan0, chan1)
-        assert np.isclose(target, dn, rtol=0.0001)
+        assert np.isclose(target, dn, rtol=RTOL)
 
     hadamard_mixtures = [[1.000000e-03, 2.000000e-03],
                          [3.100000e-03, 6.200000e-03],
@@ -194,12 +194,12 @@ def test_diamond_norm():
         chan1 = qf.I(0).aschannel()
 
         dn = qf.diamond_norm(chan0, chan1)
-        assert np.isclose(dn, target, rtol=0.0001)
+        assert np.isclose(dn, target, rtol=RTOL)
 
     chan0 = qf.TY(0.5, 0).aschannel()
     chan1 = qf.I(0).aschannel()
     dn = qf.diamond_norm(chan0, chan1)
-    assert np.isclose(dn, np.sqrt(2), rtol=0.0001)
+    assert np.isclose(dn, np.sqrt(2), rtol=RTOL)
 
     chan0 = qf.CNOT(0, 1).aschannel()
     chan1 = qf.CNOT(1, 0).aschannel()

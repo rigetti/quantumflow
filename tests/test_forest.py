@@ -16,6 +16,8 @@ import pytest
 import quantumflow as qf
 from quantumflow import pyquil
 
+from . import skip_unless_pdflatex
+
 
 def dependancies_installed():
     if shutil.which('qvm') is None:
@@ -104,6 +106,7 @@ def test_pyquil_to_circuit_more():
     # assert str(prog_new) == QUILPROG
 
 
+@skip_unless_pdflatex
 def test_pyquil_to_latex():
     prog = pyquil.Program(BELL_STATE_MEASURE)
     circ = qf.forest.pyquil_to_circuit(prog)

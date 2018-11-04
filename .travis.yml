@@ -1,0 +1,32 @@
+language: python
+sudo: required
+dist: xenial
+
+python:
+  - "3.6"
+
+install:
+  - sudo apt-get update
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - conda install -c conda-forge lapack
+  - conda install -c cvxgrp cvxpy
+  - conda list
+  - pip install -q -r requirements.txt
+  - pip install .
+
+script:
+  - python -m quantumflow.meta
+  - QUANTUMFLOW_BACKEND=numpy pytest --disable-pytest-warnings --cov=quantumflow --cov-config .toxcoveragerc --cov-fail-under 100  --cov-report term-missing tests/
+  - QUANTUMFLOW_BACKEND=eager pytest --disable-pytest-warnings
+  - QUANTUMFLOW_BACKEND=torch pytest --disable-pytest-warnings
+  - flake8 quantumflow examples tests tools setup.py
+  - mypy -p quantumflow --ignore-missing-imports
+  - sphinx-build -M html docs/source docs/build
+  - sphinx-build -M doctest docs/source docs/build
+

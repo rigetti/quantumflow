@@ -259,6 +259,10 @@ def diamond_norm(chan0: Channel, chan1: Channel) -> float:
 
     dnorm = prob.value * 2
 
+    # Diamond norm is between 0 and 2. Correct for floating point errors
+    dnorm = min(2, dnorm)
+    dnorm = max(0, dnorm)
+
     return dnorm
 
 # fin

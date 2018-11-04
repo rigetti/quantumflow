@@ -7,13 +7,13 @@
 Unit tests for quantumflow.visualization
 """
 
-
 from math import pi
-import shutil
 
 import pytest
 
 import quantumflow as qf
+
+from . import skip_unless_pdflatex
 
 
 def test_circuit_to_latex():
@@ -85,19 +85,10 @@ def test_gates_to_latex():
     print(latex)
     # qf.render_latex(latex).show()
 
-    qf.circuit_to_image(circ)
+    # qf.circuit_to_image(circ)
 
 
-def render_dependancies_installed():
-    if shutil.which('pdflatex') is None:
-        return False
-    if shutil.which('pdftocairo') is None:
-        return False
-    return True
-
-
-@pytest.mark.skipif(not render_dependancies_installed(),
-                    reason='Necessary external dependencies not installed')
+@skip_unless_pdflatex
 def test_render_latex():
     # TODO: Double check this circuit is correct
     circ = qf.addition_circuit(['a[0]', 'a[1]', 'a[2]', 'a[3]'],

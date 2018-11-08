@@ -19,7 +19,6 @@ setup(
         'networkx',
         'pyquil>=2.0.0b1',
         'pillow',
-        'antlr4-python3-runtime',
         'cvxpy',
         'sympy'
     ],

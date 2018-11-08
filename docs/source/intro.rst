@@ -6,11 +6,23 @@ Getting Started
 Installation
 ############
 
+It is easiest to install QuantumFlow's requirements using conda.
+
+:: console
+
+	> git clone https://github.com/rigetticomputing/quantumflow.git
+	> cd quantumflow
+	> conda install -c conda-forge --yes --file requirements.txt
+	> pip install -e .
+	> make docs
+
+You can also install with pip. However some of the requirements are tricky to install (i.e. tensorflow & cvxpy), and (probably) not everything in QuantumFlow will work correctly.
+
 .. code-block:: console
 
 	> git clone https://github.com/rigetticomputing/quantumflow.git
 	> cd quantumflow
-	> pip install -rrequirements.txt
+	> pip install -r requirements.txt
 	> pip install -e .
 	> make docs
 
@@ -51,7 +63,7 @@ States
 ######
 
 States contain a tensor object defined by QuantumFlow's tensor library backend. The
-``State.asarray()`` method concerts back into ordinary python objects. 
+``qf.asarray()`` method converts backend tensors back to ordinary python objects.
 
 .. doctest::
 

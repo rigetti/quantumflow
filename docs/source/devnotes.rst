@@ -11,14 +11,7 @@ Please refer to the github repository https://github.com/rigetticomputing/quantu
 Installation
 ############
 
-.. code-block:: console
-
-  > git clone https://github.com/rigetticomputing/quantumflow.git
-  > cd quantumflow
-  > pip install -rrequirements.txt
-  > pip install -e .
-  > make docs
-
+See the introduction for installation instructions.
 The Makefile contains targets for various common development tasks::
 
 	> make help
@@ -37,6 +30,7 @@ Some tests will be skipped depending on the current backend.
 
 The full tox testing suite should verifie against two consecutive versions of 
 python, in order to ameliorate dependency hell.
+(But at present [Nov 2018] we're stuck on python 3.6 only until tensorflow supports 3.7)
 
 Test Coverage
 #############
@@ -48,8 +42,7 @@ To report test coverage::
 Note that only the active backend should expect full coverage.
 
 Some lines can't be covered. This happens, for instance, due to the conditional backend imports.
-The comment ``# pragma: no cover`` can be used to mark lines that can't be covered.  (Or add 
-regular expressions to the exclude directive in the ``.coveragerc`` configuration file. 
+The comment ``# pragma: no cover`` can be used to mark lines that can't be covered. `
 
 
 Delinting

@@ -17,21 +17,18 @@ The current options are tensorflow, eager, pytorch, and numpy (default).
     acceleration, and no backprop.
 
 - eager      
-    Tensorflow eager mode. Fast with GPU. Very useful for debugging tensorflow
-    code. GPU acceleration for simulation, but not optimization. 
+    Tensorflow eager mode. Tensorflow can automatically figure out back-propagated
+    gradients, so we can efficiently optimize quantum networks using
+    stochastic gradient descent.
 
-- tensorflow 
-    Tensorflow can automatically figure out back-propagated gradients,
-    so we can efficiently optimize quantum networks using
-    stochastic gradient descent. Tensorflow can use GPU accelerated for quantum
-    simulation, but alas does not (currently) fully support complex numbers  
-    for optimization.
+- tensorflow
+    Regular tensorflow. Eager mode recommened.
 
-- pytorch 
+- torch (Experimental)
     Experimental prototype. Fast on CPU and GPU. Unfortunately stochastic gradient
     decent not available due to pytorch's lack of support for complex math.
-    See the pytorch website for installation instrustions.
-
+    Pytorch is not installed by default. See the pytorch website for installation
+    instructions.
 
 
 Configuration
@@ -54,20 +51,18 @@ You can also set the environment variable in python before quantumflow is import
 GPU
 ###
 
-The tensorflow, eager, and torch backends will use available GPUs to accelerate
-simulation. (The numpy backend does not have GPU acceleration.) Unfortunately,
-none of these backends fully supports complex numbers combined with backpropagation,
-so we cannot run stochastic gradient descent on GPUs at present.
+Unfortunately, tensorflow does not fully supports complex numbers,
+so we cannot run with eager or tensofrlow mode on GPUs at present.
+The numpy backend does not have GPU acceleration either.
 
-Note that the main limiting factor is GPU memory. A single state uses 16 x 2^N bytes. 
+The torch backened can run with GPU acceleration, which can lead to
+significant speed increase for simulation of large quantum states.
+Note that the main limiting factor is GPU memory. A single state uses 16 x 2^N bytes.
 We need to be able to place 2 states (and a bunch of smaller tensors) on a single GPU.
 Thus a 16 GiB GPU can simulate a 28 qubit system.
 
-The visible GPUs can be controlled with the CUDA_VISIBLE_DEVICES environment variable::
-
-    > CUDA_VISIBLE_DEVICES=0    tools/benchmark.py 20    # Use first GPU
-    > CUDA_VISIBLE_DEVICES=0,1  tools/benchmark.py 20    # Use first or second GPU
-    > CUDA_VISIBLE_DEVICES=''   tools/benchmark.py 20    # Use CPU
+    > QUANTUMFLOW_DEVICE=gpu QUANTUMFLOW_BACKEND=torch ./benchmark.py 24
+    > QUANTUMFLOW_DEVICE=cpu QUANTUMFLOW_BACKEND=torch ./benchmark.py 24
 
 
 Backend API

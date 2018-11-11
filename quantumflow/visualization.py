@@ -75,7 +75,7 @@ def circuit_to_latex(circ: Circuit,
     layers = _display_layers(circ, qubits)
 
     layer_code = []
-    code = [r'\lstick{\ket{' + str(q) + '}}' for q in qubits]
+    code = [r'\lstick{' + str(q) + r'}' for q in qubits]
     layer_code.append(code)
 
     for layer in layers.elements:

@@ -8,7 +8,7 @@ Installation
 
 It is easiest to install QuantumFlow's requirements using conda.
 
-:: console
+.. code-block:: console
 
 	> git clone https://github.com/rigetticomputing/quantumflow.git
 	> cd quantumflow

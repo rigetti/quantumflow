@@ -16,6 +16,7 @@ install:
   - conda info -a
   - conda install -c conda-forge lapack
   - conda install -c cvxgrp cvxpy
+  - conda install -c pytorch pytorch
   - conda list
   - pip install -q -r requirements.txt
   - pip install .

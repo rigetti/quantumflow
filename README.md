@@ -4,7 +4,7 @@
 
 # QuantumFlow: A Quantum Algorithms Development Toolkit
 
-[![Build Status](https://travis-ci.org/gecrooks/quantumflow.svg?branch=master)](https://travis-ci.org/gecrooks/quantumflow)
+[![Build Status](https://travis-ci.org/rigetticomputing/quantumflow.svg?branch=master)](https://travis-ci.org/rigetticomputing/quantumflow)
 
 ## Installation for development
 

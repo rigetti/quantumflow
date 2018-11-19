@@ -19,6 +19,7 @@ install:
   - conda install -c pytorch pytorch
   - conda list
   - pip install -q -r requirements.txt
+  - pip install -q guzzle_sphinx_theme
   - pip install .
 
 script:

@@ -4,7 +4,7 @@ numpy
 scipy               >= 1.0.0
 networkx            >= 2.1
 sphinx              >= 1.6.6
-sphinx_rtd_theme
+guzzle_sphinx_theme
 pillow
 keras
 pillow
@@ -13,4 +13,4 @@ antlr4-python3-runtime
 cvxpy
 sympy
 
-guzzle_sphinx_theme
+

@@ -23,11 +23,11 @@ from pyquil.gates import (                                  # noqa: F401
     EXCHANGE)
 
 from pyquil.quil import Program                             # noqa: F401
-from pyquil.quilatom import Qubit                           # noqa: F401
+from pyquil.quilatom import Qubit, MemoryReference          # noqa: F401
 from pyquil.wavefunction import Wavefunction                # noqa: F401
 from pyquil.device import AbstractDevice, NxDevice, gates_in_isa  # noqa: F401
 from pyquil.quilbase import *                               # noqa: F401,F403
-from pyquil.quilbase import Declare                         # noqa: F401
+from pyquil.quilbase import Declare, Gate                   # noqa: F401
 
 from pyquil import api                                      # noqa: F401
 from pyquil.api import *                                    # noqa: F401,F403
@@ -38,3 +38,5 @@ from pyquil.api import QVM                                  # noqa: F401
 from pyquil.api import local_qvm                            # noqa: F401
 
 from pyquil.noise import decoherence_noise_with_asymmetric_ro  # noqa: F401
+
+import pyquil.parser as parser								# noqa: F401

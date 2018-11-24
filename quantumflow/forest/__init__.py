@@ -8,44 +8,60 @@
 Quantumflow: Interface to pyQuil and the Rigetti Forest
 """
 
-from typing import Sequence, Dict
+from typing import Sequence, Dict, Any
 
 import networkx as nx
 import PIL
 import numpy as np
 
-from .cbits import Register
-from .qubits import Qubit
-from .states import State
-from .stdgates import STDGATES
-from .ops import Gate
-from .stdops import Measure
-from .circuits import Circuit
-from .programs import Program
-from .parser import parse_quil
-from .visualization import circuit_to_latex, render_latex
+from ..cbits import Register
+from ..qubits import Qubit
+from ..states import State
+from ..stdgates import STDGATES
+from ..ops import Gate
+from ..stdops import Measure
+from ..circuits import Circuit
+from ..programs import (Program, Wait, Call, Jump, Label, JumpWhen, JumpUnless,
+                        Pragma, Nop, Declare, Halt, Load, Store)
+from ..stdops import (Reset, EQ, LT, LE, GT, GE, Add, Mul, Div, Sub, And,
+                      Exchange, Ior, Move, Neg, Not, Xor)
+from ..visualization import circuit_to_latex, render_latex
 
 from pyquil.api._quantum_computer import _get_qvm_compiler_based_on_endpoint
 
 from . import pyquil
 
+
 __all__ = ['get_virtual_qc',
            'get_compiler',
            'NullCompiler',
            'circuit_to_pyquil',
+           'quil_to_program',
+           'pyquil_to_program',
            'pyquil_to_circuit',
            'qvm_run_and_measure',
            'wavefunction_to_state',
            'state_to_wavefunction',
-           'QUILGATES',
+           'QUIL_GATES',
+           'QUIL_RESERVED_WORDS',
            'QuantumFlowQVM',
            'pyquil_to_image']
 
-QUILGATES = {'I', 'X', 'Y', 'Z', 'H', 'S', 'T', 'PHASE',
-             'RX', 'RY', 'RZ', 'CZ', 'CNOT', 'SWAP',
-             'ISWAP', 'CPHASE00', 'CPHASE01', 'CPHASE10',
-             'CPHASE', 'PSWAP', 'CCNOT', 'CSWAP', 'PISWAP'}
+QUIL_GATES = {'I', 'X', 'Y', 'Z', 'H', 'S', 'T', 'PHASE',
+              'RX', 'RY', 'RZ', 'CZ', 'CNOT', 'SWAP',
+              'ISWAP', 'CPHASE00', 'CPHASE01', 'CPHASE10',
+              'CPHASE', 'PSWAP', 'CCNOT', 'CSWAP', 'PISWAP'}
+
 """Names of Quil compatible gates"""
+
+QUIL_RESERVED_WORDS = ['DEFGATE', 'DEFCIRCUIT', 'MEASURE', 'LABEL', 'HALT',
+                       'JUMP', 'JUMP-WHEN', 'JUMP-UNLESS', 'RESET', 'WAIT',
+                       'NOP', 'INCLUDE', 'PRAGMA', 'DECLARE', 'NEG', 'NOT',
+                       'AND', 'IOR', 'XOR', 'MOVE', 'EXCHANGE', 'CONVERT',
+                       'ADD', 'SUB', 'MUL', 'DIV', 'EQ', 'GT', 'GE', 'LT',
+                       'LE', 'LOAD', 'STORE', 'TRUE', 'FALSE', 'OR']
+
+"""Quil keywords"""
 
 
 def get_virtual_qc(qubit_nb: int,
@@ -157,7 +173,7 @@ def circuit_to_pyquil(circuit: Circuit) -> pyquil.Program:
     prog = pyquil.Program()
 
     for elem in circuit.elements:
-        if isinstance(elem, Gate) and elem.name in QUILGATES:
+        if isinstance(elem, Gate) and elem.name in QUIL_GATES:
             params = list(elem.params.values()) if elem.params else []
             prog.gate(elem.name, params, elem.qubits)
         elif isinstance(elem, Measure):
@@ -193,9 +209,143 @@ def pyquil_to_circuit(program: pyquil.Program) -> Circuit:
             gate = gate.relabel(qubits)
             circ += gate
         else:
-            raise ValueError('Program is not protoquil')
+            raise ValueError('PyQuil program is not protoquil')
 
     return circ
+
+
+def quil_to_program(quil: str) -> Program:
+    """Parse a quil program and return a Program object"""
+    pyquil_instructions = pyquil.parser.parse(quil)
+    return pyquil_to_program(pyquil_instructions)
+
+
+def pyquil_to_program(program: pyquil.Program) -> Program:
+    """Convert a  pyQuil program to a QuantumFlow Program"""
+    def _reg(mem: Any) -> Any:
+        if isinstance(mem, pyquil.MemoryReference):
+            return Register(mem.name)[mem.offset]
+        return mem
+
+    prog = Program()
+    for inst in program:
+        if isinstance(inst, pyquil.Gate):
+            qubits = [q.index for q in inst.qubits]
+            if inst.name in STDGATES:
+                defgate = STDGATES[inst.name]
+                gate = defgate(*inst.params)
+                gate = gate.relabel(qubits)
+                prog += gate
+            else:
+                prog += Call(inst.name, inst.params, qubits)
+
+        elif isinstance(inst, pyquil.ClassicalEqual):
+            prog += EQ(_reg(inst.target), _reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalLessThan):
+            prog += LT(_reg(inst.target), _reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalLessEqual):
+            prog += LE(_reg(inst.target), _reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalGreaterThan):
+            prog += GT(_reg(inst.target), _reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalGreaterEqual):
+            prog += GE(_reg(inst.target), _reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalAdd):
+            prog += Add(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalMul):
+            prog += Mul(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalDiv):
+            prog += Div(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalSub):
+            prog += Sub(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalAnd):
+            prog += And(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalExchange):
+            prog += Exchange(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalInclusiveOr):
+            prog += Ior(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalMove):
+            # Also handles deprecated ClassicalTrue and ClassicalFalse
+            prog += Move(_reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalNeg):
+            prog += Neg(_reg(inst.target))
+
+        elif isinstance(inst, pyquil.ClassicalNot):
+            prog += Not(_reg(inst.target))
+
+        elif isinstance(inst, pyquil.ClassicalExclusiveOr):
+            target = _reg(inst.left)
+            source = _reg(inst.right)
+            prog += Xor(target, source)
+
+        elif isinstance(inst, pyquil.Declare):
+            prog += Declare(inst.name,
+                            inst.memory_type,
+                            inst.memory_size,
+                            inst.shared_region)
+
+        elif isinstance(inst, pyquil.Halt):
+            prog += Halt()
+
+        elif isinstance(inst, pyquil.Jump):
+            prog += Jump(inst.target.name)
+
+        elif isinstance(inst, pyquil.JumpTarget):
+            prog += Label(inst.label.name)
+
+        elif isinstance(inst, pyquil.JumpWhen):
+            prog += JumpWhen(inst.target.name, _reg(inst.condition))
+
+        elif isinstance(inst, pyquil.JumpUnless):
+            prog += JumpUnless(inst.target.name, _reg(inst.condition))
+
+        elif isinstance(inst, pyquil.Pragma):
+            prog += Pragma(inst.command, inst.args, inst.freeform_string)
+
+        elif isinstance(inst, pyquil.Measurement):
+            if inst.classical_reg is None:
+                prog += Measure(inst.qubit.index)
+            else:
+                prog += Measure(inst.qubit.index, _reg(inst.classical_reg))
+
+        elif isinstance(inst, pyquil.Nop):
+            prog += Nop()
+
+        elif isinstance(inst, pyquil.Wait):
+            prog += Wait()
+
+        elif isinstance(inst, pyquil.Reset):
+            prog += Reset()
+
+        elif isinstance(inst, pyquil.ResetQubit):
+            prog += Reset(inst.qubit)
+
+        elif isinstance(inst, pyquil.ClassicalStore):
+            prog += Store(inst.target, _reg(inst.left), _reg(inst.right))
+
+        elif isinstance(inst, pyquil.ClassicalLoad):
+            prog += Load(_reg(inst.target), inst.left, _reg(inst.right))
+
+        # elif isinstance(inst, pyquil.ClassicalConvert):
+        #     prog += Convert(inst.target, _reg(inst.left), _reg(inst.right))
+
+        else:
+            raise ValueError('Unknown pyQuil instruction: {}'
+                             .format(str(inst)))   # pragma: no cover
+
+    return prog
 
 
 def state_to_wavefunction(state: State) -> pyquil.Wavefunction:
@@ -236,7 +386,7 @@ class QuantumFlowQVM(pyquil.api.QAM):
         """
 
         assert self.status in ['connected', 'done']
-        prog = parse_quil(str(binary))
+        prog = quil_to_program(str(binary))
 
         self._prog = prog
         self.program = binary

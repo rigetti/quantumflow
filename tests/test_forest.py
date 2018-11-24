@@ -14,7 +14,7 @@ import numpy as np
 import pytest
 
 import quantumflow as qf
-from quantumflow import pyquil
+from quantumflow.forest import pyquil
 
 from . import skip_unless_pdflatex
 

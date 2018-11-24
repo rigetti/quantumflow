@@ -27,6 +27,7 @@ import quantumflow.backend as bk
 from .qubits import Qubits, QubitVector, qubits_count_tuple, asarray
 from .states import State, Density
 
+from .utils import symbolize
 
 __all__ = ['Operation', 'Gate', 'Channel']
 
@@ -196,22 +197,45 @@ class Gate(Operation):
         tensor = bk.tensormul(gate0.tensor, gate1.tensor, indices)
         return Gate(tensor=tensor, qubits=gate1.qubits)
 
+    # FIXME
     def quil(self) -> str:
         # Note: We don't want to eval tensor here.
+
+        def _param_format(obj: Any) -> str:
+            if isinstance(obj, float):
+                try:
+                    return str(symbolize(obj))
+                except ValueError:
+                    return "{}".format(obj)
+            return str(obj)
+
         if self.name == 'Gate':
             return super().__repr__()
 
-        # Handle named, parameterized subclasses
-        rep = self.name + '('
-        items = []
+        fqubits = " "+" ".join([str(qubit) for qubit in self.qubits])
+
         if self.params:
-            items.extend([str(value) for value in self.params.values()])
+            fparams = "(" + ", ".join(_param_format(p)
+                                      for p in self.params.values()) + ")"
+        else:
+            fparams = ""
 
-        items.extend([str(value) for value in self.qubits])
+        return "{}{}{}".format(self.name, fparams, fqubits)
 
-        rep += ', '.join(items)
-        rep += ')'
-        return rep
+    # def __str__(self) -> str:
+    #     if self.name == 'Gate':
+    #         return super().__repr__()
+
+    #     rep = self.name + '('
+    #     items = []
+    #     if self.params:
+    #         items.extend([str(value) for value in self.params.values()])
+
+    #     items.extend([str(value) for value in self.qubits])
+
+    #     rep += ', '.join(items)
+    #     rep += ')'
+    #     return rep
 
     def asgate(self) -> 'Gate':
         return self

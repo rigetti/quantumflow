@@ -17,7 +17,7 @@ QUIL_FILES = [
     'measure.quil',
     'qaoa.quil',
     'bell.quil',
-    'include.quil',
+    # 'include.quil',
     ]
 
 RUNNABLE_QUIL_FILES = QUIL_FILES[:-1]
@@ -28,7 +28,9 @@ def test_parse_quilfile():
     for quilfile in QUIL_FILES:
         filename = 'tests/quil/'+quilfile
         print("<<<"+filename+">>>")
-        qf.parse_quilfile(filename)
+        with open(filename, 'r') as f:
+            quil = f.read()
+        qf.forest.quil_to_program(quil)
 
 
 def test_run_quilfile():
@@ -36,10 +38,15 @@ def test_run_quilfile():
     for quilfile in RUNNABLE_QUIL_FILES:
         filename = 'tests/quil/'+quilfile
         print("<<<"+filename+">>>")
-        prog = qf.parse_quilfile(filename)
+        with open(filename, 'r') as f:
+            quil = f.read()
+        prog = qf.forest.quil_to_program(quil)
         prog.run()
 
 
 def test_unparsable():
     with pytest.raises(RuntimeError):
-        qf.parse_quilfile('tests/quil/unparsable.quil')
+        filename = 'tests/quil/unparsable.quil'
+        with open(filename, 'r') as f:
+            quil = f.read()
+        qf.forest.quil_to_program(quil)

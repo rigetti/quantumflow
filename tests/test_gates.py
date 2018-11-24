@@ -24,30 +24,30 @@ REPS = 4
 
 def test_repr():
     g = qf.H()
-    assert str(g) == 'H(0)'
+    assert str(g) == 'H 0'
 
     g = qf.RX(3.12)
-    assert str(g) == 'RX(3.12, 0)'
+    assert str(g) == 'RX(3.12) 0'
 
     g = qf.identity_gate(2)
-    assert str(g) == 'I(0, 1)'
+    assert str(g) == 'I 0 1'
 
     g = qf.random_gate(4)
-    assert str(g) == 'RAND4(0, 1, 2, 3)'
+    assert str(g) == 'RAND4 0 1 2 3'
 
     g = qf.H(0)
-    assert str(g) == 'H(0)'
+    assert str(g) == 'H 0'
 
     g = qf.CNOT(0, 1)
-    assert str(g) == 'CNOT(0, 1)'
+    assert str(g) == 'CNOT 0 1'
 
     g = qf.Gate(qf.CNOT().tensor)
     assert str(g).startswith('<quantumflow.ops.Gate')
 
 
 def test_repr2():
-    g = qf.ZYZ(3.0, 1.0, 1.2, 0)
-    assert str(g) == 'ZYZ(3.0, 1.0, 1.2, 0)'
+    g = qf.ZYZ(3.0, 1.0, 1.0, 0)
+    assert str(g) == 'ZYZ(3, 1, 1) 0'
 
 
 def test_identity_gate():

@@ -13,30 +13,33 @@ sequence, whereas Programs can contain non-linear control flow.
 
 # Callable and State imported for typing pragmas
 
-from typing import Any, List, Generator, Dict, Union, Tuple
+from typing import List, Generator, Dict, Union, Tuple
 from abc import ABC  # Abstract Base Class
 
-import numpy as np
+# import numpy as np
 
-import sympy
+# import sympy
 from sympy import Symbol as Parameter
 
 from .cbits import Addr, Register
 from .qubits import Qubits
 from .states import zero_state, State, Density
-from .ops import Gate
+# from .ops import Gate
 from .stdgates import STDGATES
-from .utils import symbolize
-from .backend import TensorLike
+# from .utils import symbolize
+# from .backend import TensorLike
 
 
 __all__ = ['Instruction', 'Program', 'DefCircuit', 'Wait',
            'Nop', 'Halt',
            'Label', 'Jump', 'JumpWhen', 'JumpUnless',
-           'Pragma', 'Include', 'Call', 'DefGate', 'Declare',
+           'Pragma', 'Include', 'Call',
+           'Declare',
            # 'Convert',
-           'Load', 'Store', 'Density',
-           'Parameter', 'quil_parameter', 'eval_parameter']
+           'Load', 'Store',
+           'Parameter',
+           # 'DefGate', 'quil_parameter', 'eval_parameter'
+           ]
 
 
 # Private register used to store program state
@@ -417,7 +420,7 @@ class Call(Instruction):
         else:
             fqubits = ""
         if self.params:
-            fparams = "(" + ", ".join(_param_format(p) for p in self.params) \
+            fparams = "(" + ", ".join(str(p) for p in self.params) \
                 + ")"
         else:
             fparams = ""
@@ -435,60 +438,59 @@ class Call(Instruction):
         ket = gate.run(ket)
         return ket
 
+# FIXME
+# class DefGate(Instruction):
+#     """Define a new quantum gate."""
+#     def __init__(self,
+#                  gatename: str,
+#                  matrix: TensorLike,
+#                  params: List[Parameter] = None) -> None:
+#         self.gatename = gatename
+#         self.matrix = matrix
+#         self.params = params
 
-class DefGate(Instruction):
-    """Define a new quantum gate."""
-    def __init__(self,
-                 gatename: str,
-                 matrix: TensorLike,
-                 params: List[Parameter] = None) -> None:
-        self.gatename = gatename
-        self.matrix = matrix
-        self.params = params
+#     def quil(self) -> str:
+#         if self.params:
+#             fparams = '(' + ','.join(map(str, self.params)) + ')'
+#         else:
+#             fparams = ''
 
-    def quil(self) -> str:
-        if self.params:
-            fparams = '(' + ','.join(map(str, self.params)) + ')'
-        else:
-            fparams = ''
+#         result = '{} {}{}:\n'.format(self.name, self.gatename, fparams)
 
-        result = '{} {}{}:\n'.format(self.name, self.gatename, fparams)
+#         for row in self.matrix:
+#             result += "    "
+#             # FIXME: Hack to format complex numbers as quil expects
+#             result += ", ".join(str(col).replace('*I', 'i')
+#                                         .replace('j', 'i')
+#                                         .replace('1.0i', 'i') for col in row)
+#             result += "\n"
 
-        for row in self.matrix:
-            result += "    "
-            # FIXME: Hack to format complex numbers as quil expects
-            result += ", ".join(str(col).replace('*I', 'i')
-                                        .replace('j', 'i')
-                                        .replace('1.0i', 'i') for col in row)
-            result += "\n"
+#         return result
 
-        return result
+#     def _create_gate(self, *gateparams: float) -> Gate:
+#         if not self.params:
+#             matrix = np.asarray(self.matrix)
+#             gate = Gate(matrix, name=self.gatename)
+#         else:
+#             params = {str(p): complex(g) for p, g
+#                       in zip(self.params, gateparams)}
+#             K = len(self.matrix)
+#             matrix = np.zeros(shape=(K, K), dtype=np.complex)
+#             for i in range(K):
+#                 for j in range(K):
+#                     value = eval_parameter(self.matrix[i][j], params)
+#                     matrix[i, j] = value
+#             matrix = np.asarray(matrix)
+#             gate = Gate(matrix, name=self.gatename)
+#         return gate
 
-    def _create_gate(self, *gateparams: float) -> Gate:
-        if not self.params:
-            matrix = np.asarray(self.matrix)
-            gate = Gate(matrix, name=self.gatename)
-        else:
-            params = {str(p): complex(g) for p, g
-                      in zip(self.params, gateparams)}
-            K = len(self.matrix)
-            matrix = np.zeros(shape=(K, K), dtype=np.complex)
-            for i in range(K):
-                for j in range(K):
-                    value = eval_parameter(self.matrix[i][j], params)
-                    matrix[i, j] = value
-            matrix = np.asarray(matrix)
-            gate = Gate(matrix, name=self.gatename)
-        return gate
-
-    def run(self, ket: State) -> State:
-        namedgates = ket.memory[NAMEDGATES].copy()
-        namedgates[self.gatename] = self._create_gate
-        ket = ket.update({NAMEDGATES: namedgates})
-        return ket
+#     def run(self, ket: State) -> State:
+#         namedgates = ket.memory[NAMEDGATES].copy()
+#         namedgates[self.gatename] = self._create_gate
+#         ket = ket.update({NAMEDGATES: namedgates})
+#         return ket
 
 
-# TESTME
 class Declare(Instruction):
     """Declare classical memory"""
     def __init__(self, memory_name: str,
@@ -514,9 +516,9 @@ class Declare(Instruction):
             ql += ['SHARING']
             ql += [self.shared_region]
 
-            if self.offsets:
-                for loc, name in self.offsets:
-                    ql += ['OFFSET', str(loc), name]
+            # if self.offsets:
+            #     for loc, name in self.offsets:
+            #         ql += ['OFFSET', str(loc), name]
 
         return ' '.join(ql)
 
@@ -528,34 +530,34 @@ class Declare(Instruction):
 
 # ==== UTILITIES ====
 
-def _param_format(obj: Any) -> str:
-    """Format an object as a latex string."""
-    if isinstance(obj, float):
-        try:
-            return str(symbolize(obj))
-        except ValueError:
-            return "{}".format(obj)
+# def _param_format(obj: Any) -> str:
+#     """Format an object as a latex string."""
+#     if isinstance(obj, float):
+#         try:
+#             return str(symbolize(obj))
+#         except ValueError:
+#             return "{}".format(obj)
 
-    return str(obj)
-
-
-def quil_parameter(symbol: str) -> Parameter:
-    """Create a quil parameter.
-
-    Args:
-        symbol: The variable name. If the first character is not '%' then a
-            percent sign will be prepended.
-
-    Returns:
-        A sympy symbol object representing the quil variable.
-    """
-    if symbol[0] != '%':
-        symbol = '%' + symbol
-    return sympy.symbols(symbol)
+#     return str(obj)
 
 
-def eval_parameter(param: Any, params: Dict[str, Any]) -> complex:
-    """Evaluate a quil parameter (a sympy Symbol). Ordinary
-    python numbers will be passed through unchanged.
-    """
-    return sympy.N(param, subs=params)
+# def quil_parameter(symbol: str) -> Parameter:
+#     """Create a quil parameter.
+
+#     Args:
+#         symbol: The variable name. If the first character is not '%' then a
+#             percent sign will be prepended.
+
+#     Returns:
+#         A sympy symbol object representing the quil variable.
+#     """
+#     if symbol[0] != '%':
+#         symbol = '%' + symbol
+#     return sympy.symbols(symbol)
+
+
+# def eval_parameter(param: Any, params: Dict[str, Any]) -> complex:
+#     """Evaluate a quil parameter (a sympy Symbol). Ordinary
+#     python numbers will be passed through unchanged.
+#     """
+#     return sympy.N(param, subs=params)

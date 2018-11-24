@@ -38,12 +38,6 @@ represents a hybrid device with quantum computation and classical control flow.
     assert prog.memory == {0: 0, 1: 1}
 
 
-Parser
-######
-.. autofunction:: parse_quil
-.. autofunction:: parse_quilfile
-
-
 Programs
 #########
 .. autoclass:: Instruction
@@ -62,8 +56,6 @@ Programs
 .. autoclass:: Move
 .. autoclass:: Exchange
 .. autoclass:: Not
-.. autoclass:: FALSE
-.. autoclass:: TRUE
 .. autoclass:: Label
 .. autoclass:: Jump
 .. autoclass:: JumpWhen
@@ -72,7 +64,5 @@ Programs
 .. autoclass:: Measure
 .. autoclass:: Include
 .. autoclass:: Call
-.. autoclass:: DefGate
-.. autoclass:: Parameter
 
 

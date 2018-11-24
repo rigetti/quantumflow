@@ -32,7 +32,6 @@ __all__ = ['Measure', 'Reset', 'Barrier', 'If',
            'And', 'Ior', 'Or', 'Xor',
            'Add', 'Mul', 'Sub', 'Div',
            'Move', 'Exchange',
-           'TRUE', 'FALSE',
            'EQ', 'LT', 'GT', 'LE', 'GE', 'NE']
 
 
@@ -340,28 +339,3 @@ class LE(Comparison):
 class NE(Comparison):
     """Set target to boolean (left!=right)"""
     _op = operator.ne
-
-
-class TRUE(Operation):
-    """Set classical bit to one. (Deprecated in quil. Use Move)"""
-    def __init__(self, addr: Addr) -> None:
-        self.addr = addr
-
-    def quil(self) -> str:
-        return '{} {}'.format(self.name, self.addr)
-
-    def run(self, ket: State) -> State:
-        return ket.update({self.addr: 1})
-
-
-class FALSE(Operation):
-    """Set classical bit to zero. (Deprecated in quil. Use Move)"""
-    def __init__(self, addr: Addr) -> None:
-        # super().__init__()
-        self.addr = addr
-
-    def quil(self) -> str:
-        return '{} {}'.format(self.name, self.addr)
-
-    def run(self, ket: State) -> State:
-        return ket.update({self.addr: 0})

@@ -164,6 +164,21 @@ class State:
         matrix = bk.outer(self.tensor, bk.conj(self.tensor))
         return Density(matrix, self.qubits, self._memory)
 
+    def __str__(self) -> str:
+        state = self.vec.asarray()
+        s = []
+        count = 0
+        MAX_ELEMENTS = 64
+        for index, amplitude in np.ndenumerate(state):
+            if not np.isclose(amplitude, 0.0):
+                ket = '|' + ''.join([str(n) for n in index]) + '>'
+                s.append('({c.real:0.04g}{c.imag:+0.04g}i) {k}'
+                         .format(c=amplitude, k=ket))
+                count += 1
+                if count > MAX_ELEMENTS:
+                    s.append('...')
+                    break
+        return ' + '.join(s)
 
 # End class State
 

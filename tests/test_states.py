@@ -85,6 +85,12 @@ def test_states_close():
     assert qf.states_close(ket2, ket2)
 
 
+def test_str():
+    ket = qf.random_state(10)
+    s = str(ket)
+    assert s[-3:] == '...'
+
+
 def test_print_state():
     f = io.StringIO()
     state = qf.w_state(5)

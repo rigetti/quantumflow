@@ -6,7 +6,7 @@ of `from pyquil.gates import SWAP`, use `from quantumflow import pyquil`,
 then `pyquil.SWAP(...)`.
 
 Importation should be simplified in pyQuil 2.0
-(https://github.com/rigetticomputing/pyquil/issues/302)
+(https://github.com/rigetti/pyquil/issues/302)
 """
 
 # FIXME: star imports are not working as expected.

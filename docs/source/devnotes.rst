@@ -6,7 +6,7 @@ Development Notes
 
 .. contents:: :local:
 
-Please refer to the github repository https://github.com/rigetticomputing/quantumflow for source code, and to submit issues and pull requests. Documentation is hosted at readthedocs https://quantumflow.readthedocs.io/ .
+Please refer to the github repository https://github.com/rigetti/quantumflow for source code, and to submit issues and pull requests. Documentation is hosted at readthedocs https://quantumflow.readthedocs.io/ .
 
 Installation
 ############

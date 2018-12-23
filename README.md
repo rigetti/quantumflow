@@ -4,13 +4,13 @@
 
 # QuantumFlow: A Quantum Algorithms Development Toolkit
 
-[![Build Status](https://travis-ci.org/rigetticomputing/quantumflow.svg?branch=master)](https://travis-ci.org/rigetticomputing/quantumflow)
+[![Build Status](https://travis-ci.org/rigetti/quantumflow.svg?branch=master)](https://travis-ci.org/rigetti/quantumflow)
 
 ## Installation for development
 
 It is easiest to install QuantumFlow's requirements using conda.
 ```
-git clone https://github.com/rigetticomputing/quantumflow.git
+git clone https://github.com/rigetti/quantumflow.git
 cd quantumflow
 conda install -c conda-forge --file requirements.txt
 pip install -e .
@@ -18,7 +18,7 @@ pip install -e .
 
 You can also install with pip. However some of the requirements are tricky to install (notably tensorflow & cvxpy), and (probably) not everything in QuantumFlow will work correctly.
 ```
-git clone https://github.com/rigetticomputing/quantumflow.git
+git clone https://github.com/rigetti/quantumflow.git
 cd quantumflow
 pip install -r requirements.txt
 pip install -e .

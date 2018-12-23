@@ -10,7 +10,7 @@ It is easiest to install QuantumFlow's requirements using conda.
 
 .. code-block:: console
 
-	> git clone https://github.com/rigetticomputing/quantumflow.git
+	> git clone https://github.com/rigetti/quantumflow.git
 	> cd quantumflow
 	> conda install -c conda-forge --yes --file requirements.txt
 	> pip install -e .
@@ -20,7 +20,7 @@ You can also install with pip. However some of the requirements are tricky to in
 
 .. code-block:: console
 
-	> git clone https://github.com/rigetticomputing/quantumflow.git
+	> git clone https://github.com/rigetti/quantumflow.git
 	> cd quantumflow
 	> pip install -r requirements.txt
 	> pip install -e .

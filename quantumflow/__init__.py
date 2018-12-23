@@ -13,6 +13,7 @@ from quantumflow.gates import *                             # noqa: F401,F403
 from quantumflow.stdgates import *                          # noqa: F401,F403
 from quantumflow.channels import *                          # noqa: F401,F403
 from quantumflow.circuits import *                          # noqa: F401,F403
+from quantumflow.paulialgebra import *						# noqa: F401,F403
 from quantumflow.programs import *                          # noqa: F401,F403
 from quantumflow.decompositions import *                    # noqa: F401,F403
 from quantumflow.measures import *                          # noqa: F401,F403

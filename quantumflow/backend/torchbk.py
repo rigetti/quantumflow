@@ -190,7 +190,7 @@ def diag(tensor: BKTensor) -> BKTensor:
     return torch.stack(torch.diag(tensor[0]), torch.diag(tensor[1]))
 
 
-def reshape(tensor: BKTensor, shape: list)-> BKTensor:
+def reshape(tensor: BKTensor, shape: list) -> BKTensor:
     return torch.stack((tensor[0].view(*shape), tensor[1].view(*shape)))
 
 

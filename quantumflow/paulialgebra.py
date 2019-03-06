@@ -9,8 +9,6 @@ QuantumFlow: Module for working with the Pauli algebra.
 
 # Kudos: Adapted from PyQuil's paulis.py, original written by Nick Rubin
 
-# TODO:
-# pauli_close
 
 from typing import Tuple, Any, Iterator, List
 from operator import itemgetter, mul
@@ -20,12 +18,13 @@ import heapq
 from cmath import isclose  # type: ignore
 from numbers import Complex
 
-from quantumflow.qubits import Qubit, Qubits
+from .config import TOLERANCE
+from .qubits import Qubit, Qubits
 
 
 __all__ = ['PauliTerm', 'Pauli', 'sX', 'sY', 'sZ', 'sI',
            'pauli_sum', 'pauli_product', 'pauli_pow', 'paulis_commute',
-           'pauli_commuting_sets']
+           'pauli_commuting_sets', 'paulis_close']
 
 PauliTerm = Tuple[Tuple[Tuple[Qubit, str], ...], complex]
 
@@ -309,6 +308,14 @@ def pauli_pow(pauli: Pauli, exponent: int) -> Pauli:
     return x * y
 
 
+def paulis_close(pauli0: Pauli, pauli1: Pauli, tolerance: float = TOLERANCE) \
+        -> bool:
+    """Returns: True if Pauli elements are almost identical."""
+    pauli = pauli0 - pauli1
+    d = sum(abs(coeff)**2 for _, coeff in pauli.terms)
+    return d <= tolerance
+
+
 def paulis_commute(element0: Pauli, element1: Pauli) -> bool:
     """
     Return true if the two elements of the Pauli algebra commute.
@@ -341,9 +348,9 @@ def paulis_commute(element0: Pauli, element1: Pauli) -> bool:
 def pauli_commuting_sets(element: Pauli) -> Tuple[Pauli, ...]:
     """Gather the terms of a Pauli polynomial into commuting sets.
 
-    Uses algorithm defined in (Raeisi, Wiebe, Sanders, arXiv:1108.4318, 2011)
-    to find commuting sets. Except uses commutation check from
-    arXiv:1405.5749v2
+    Uses the algorithm defined in (Raeisi, Wiebe, Sanders,
+    arXiv:1108.4318, 2011) to find commuting sets. Except uses commutation
+    check from arXiv:1405.5749v2
     """
     if len(element) < 2:
         return (element,)

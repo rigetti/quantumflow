@@ -214,10 +214,10 @@ def test_qvm():
         qf.forest.qvm_run_and_measure(circ, 1)
 
 
-def test_get_virtual_qc():
-    qf.forest.get_virtual_qc(4)
-    qf.forest.get_virtual_qc(4, noisy=True)
+# def test_get_virtual_qc():
+#     qf.forest.get_virtual_qc(4)
+#     qf.forest.get_virtual_qc(4, noisy=True)
 
 
-def test_get_compiler():
-    qf.forest.get_compiler(4)
+# def test_get_compiler():
+#     qf.forest.get_compiler(4)

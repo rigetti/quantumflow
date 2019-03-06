@@ -77,30 +77,30 @@ def test_math():
     arg = get_arg(qf.forest.quil_to_program("RX(2.0*pi) 0"))
     assert arg == 2.0*math.pi
 
-    arg = get_arg(qf.forest.quil_to_program("RX(sin(1.0)) 0"))
+    arg = get_arg(qf.forest.quil_to_program("RX(SIN(1.0)) 0"))
     assert arg == math.sin(1.0)
 
-    arg = get_arg(qf.forest.quil_to_program("RX(sin(1.0)) 0"))
+    arg = get_arg(qf.forest.quil_to_program("RX(SIN(1.0)) 0"))
     assert arg == math.sin(1.0)
 
-    arg = get_arg(qf.forest.quil_to_program("RX(exp(3.3)) 0"))
+    arg = get_arg(qf.forest.quil_to_program("RX(EXP(3.3)) 0"))
     assert arg == math.exp(3.3)
     print(arg, type(arg))
 
-    arg = get_arg(qf.forest.quil_to_program("RX(cos(2.3)) 0"))
+    arg = get_arg(qf.forest.quil_to_program("RX(COS(2.3)) 0"))
     print(arg, type(arg))
     assert math.cos(2.3) - arg == ALMOST_ZERO
 
-    arg = get_arg(qf.forest.quil_to_program("RX( sqrt( 42  )   ) 0"))
+    arg = get_arg(qf.forest.quil_to_program("RX( SQRT( 42  )   ) 0"))
     assert math.sqrt(42) - arg == ALMOST_ZERO
 
-    arg = get_arg(qf.forest.quil_to_program("RX(cis(2)) 0"))
+    arg = get_arg(qf.forest.quil_to_program("RX(CIS(2)) 0"))
     assert cmath.isclose(cis(2), arg)
 
     arg = get_arg(qf.forest.quil_to_program("RX(2.3 i) 0"))
     assert arg == 2.3j
 
-    arg = get_arg(qf.forest.quil_to_program("RX(exp(2)) 0"))
+    arg = get_arg(qf.forest.quil_to_program("RX(EXP(2)) 0"))
     assert math.exp(2) - arg == ALMOST_ZERO
 
     arg = get_arg(qf.forest.quil_to_program("RX(2^2) 0"))

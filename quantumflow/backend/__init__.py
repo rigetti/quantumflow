@@ -20,7 +20,8 @@ elif BACKEND == 'torch':                            # pragma: no cover
 else:                                               # pragma: no cover
     from quantumflow.backend.numpybk import *       # noqa: F403
 
-__all__ = ['BKTensor', 'CTYPE', 'DEVICE', 'FTYPE', 'MAX_QUBITS', 'TENSOR',
+__all__ = [  # noqa: F405
+           'BKTensor', 'CTYPE', 'DEVICE', 'FTYPE', 'MAX_QUBITS', 'TENSOR',
            'TL', 'TensorLike', 'absolute', 'arccos', 'astensor',
            'ccast', 'cis', 'conj', 'cos', 'diag', 'evaluate', 'exp', 'fcast',
            'gpu_available', 'imag', 'inner', 'minimum',
@@ -28,7 +29,7 @@ __all__ = ['BKTensor', 'CTYPE', 'DEVICE', 'FTYPE', 'MAX_QUBITS', 'TENSOR',
            'rank', 'real', 'reshape', 'set_random_seed', 'sin',
            'sqrt', 'sum', 'tensormul', 'trace', 'transpose',
            'getitem', 'astensorproduct', 'productdiag',
-           'EINSUM_SUBSCRIPTS', 'einsum']
+           'EINSUM_SUBSCRIPTS', 'einsum']  # noqa: F405
 
 if SEED is not None:               # pragma: no cover
     np_set_random_seed(SEED)

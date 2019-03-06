@@ -74,7 +74,7 @@ sorted order
 """
 
 
-def gpu_available()->bool:
+def gpu_available() -> bool:
     """Does the backend support GPU acceleration on current hardware?"""
     return False
 

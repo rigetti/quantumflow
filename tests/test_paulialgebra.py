@@ -267,3 +267,13 @@ def test_check_commutation_rigorous():
 
     for left, right in commuting:
         assert qf.paulis_commute(left, right)
+
+
+def test_isclose():
+    x = sX(1)
+    y = sY(2, 2.0)
+    y2 = sY(2, 2.00000001)
+
+    assert qf.paulis_close(x, x)
+    assert not qf.paulis_close(x, y)
+    assert qf.paulis_close(y, y2)

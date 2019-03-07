@@ -16,9 +16,12 @@ import numpy as np
 
 import tensorflow as tf
 from tensorflow import transpose, minimum, exp, cos, sin        # noqa: F401
-from tensorflow import conj, real, imag, sqrt, matmul, trace    # noqa: F401
+from tensorflow.math import real, imag, sqrt                    # noqa: F401
+from tensorflow.math import conj                                # noqa: F401
+from tensorflow import matmul                                   # noqa: F401
 from tensorflow import abs as absolute                          # noqa: F401
-from tensorflow import diag_part as diag                        # noqa: F401
+from tensorflow.linalg import diag_part as diag                 # noqa: F401
+from tensorflow.linalg import trace                             # noqa: F401
 from tensorflow import einsum, reshape                          # noqa: F401
 from tensorflow.python.client import device_lib
 
@@ -31,7 +34,7 @@ name = TL.__name__
 version = TL.__version__
 
 
-tf.InteractiveSession()             # TESTME: Is this safe to do?
+tf.compat.v1.InteractiveSession()             # TESTME: Is this safe to do?
 
 CTYPE = tf.complex128
 FTYPE = tf.float64
@@ -70,7 +73,7 @@ def size(tensor: BKTensor) -> int:
 
 def astensor(array: TensorLike) -> BKTensor:
     """Covert numpy array to tensorflow tensor"""
-    tensor = tf.convert_to_tensor(array, dtype=CTYPE)
+    tensor = tf.convert_to_tensor(value=array, dtype=CTYPE)
     return tensor
 
 
@@ -83,7 +86,7 @@ def astensorproduct(array: TensorLike) -> BKTensor:
 
 def evaluate(tensor: BKTensor) -> TensorLike:
     """Return the value of a tensor"""
-    return tensor.eval()    # Requires a tensorflow session to be running.
+    return tensor.numpy()
 
 
 def inner(tensor0: BKTensor, tensor1: BKTensor) -> BKTensor:
@@ -91,7 +94,7 @@ def inner(tensor0: BKTensor, tensor1: BKTensor) -> BKTensor:
     # Note: Relying on fact that vdot flattens arrays
     N = rank(tensor0)
     axes = list(range(N))
-    return tf.tensordot(tf.conj(tensor0), tensor1, axes=(axes, axes))
+    return tf.tensordot(tf.math.conj(tensor0), tensor1, axes=(axes, axes))
 
 
 def outer(tensor0: BKTensor, tensor1: BKTensor) -> BKTensor:
@@ -111,12 +114,12 @@ def arccos(theta: float) -> BKTensor:
 def sum(tensor: BKTensor,
         axis: typing.Union[int, typing.Tuple[int]] = None,
         keepdims: bool = None) -> BKTensor:
-    return tf.reduce_sum(tensor, axis, keepdims)
+    return tf.reduce_sum(input_tensor=tensor, axis=axis, keepdims=keepdims)
 
 
 def set_random_seed(seed: int) -> None:
     np_set_random_seed(seed)
-    tf.set_random_seed(seed)
+    tf.compat.v1.set_random_seed(seed)
 
 
 def getitem(tensor: BKTensor, key: typing.Any) -> BKTensor:
@@ -126,7 +129,7 @@ def getitem(tensor: BKTensor, key: typing.Any) -> BKTensor:
 def productdiag(tensor: BKTensor) -> BKTensor:
     N = rank(tensor)
     tensor = reshape(tensor, [2**(N//2), 2**(N//2)])
-    tensor = tf.diag_part(tensor)
+    tensor = tf.linalg.tensor_diag_part(tensor)
     tensor = reshape(tensor, [2]*(N//2))
     return tensor
 

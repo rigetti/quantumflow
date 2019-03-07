@@ -11,14 +11,16 @@ from quantumflow.config import BACKEND, SEED
 from .numpybk import set_random_seed as np_set_random_seed
 
 
-if BACKEND == 'tensorflow':                         # pragma: no cover
-    from quantumflow.backend.tensorflowbk import *  # noqa: F403
-elif BACKEND == 'eager':                            # pragma: no cover
-    from quantumflow.backend.eagerbk import *       # noqa: F403
-elif BACKEND == 'torch':                            # pragma: no cover
-    from quantumflow.backend.torchbk import *       # noqa: F403
-else:                                               # pragma: no cover
-    from quantumflow.backend.numpybk import *       # noqa: F403
+if BACKEND == 'tensorflow':                          # pragma: no cover
+    from quantumflow.backend.tensorflowbk import *   # noqa: F403
+elif BACKEND == 'eager':                             # pragma: no cover
+    from quantumflow.backend.eagerbk import *        # noqa: F403
+elif BACKEND == 'tensorflow2':                       # pragma: no cover
+    from quantumflow.backend.tensorflow2bk import *  # noqa: F403
+elif BACKEND == 'torch':                             # pragma: no cover
+    from quantumflow.backend.torchbk import *        # noqa: F403
+else:                                                # pragma: no cover
+    from quantumflow.backend.numpybk import *        # noqa: F403
 
 __all__ = [  # noqa: F405
            'BKTensor', 'CTYPE', 'DEVICE', 'FTYPE', 'MAX_QUBITS', 'TENSOR',
@@ -29,7 +31,8 @@ __all__ = [  # noqa: F405
            'rank', 'real', 'reshape', 'set_random_seed', 'sin',
            'sqrt', 'sum', 'tensormul', 'trace', 'transpose',
            'getitem', 'astensorproduct', 'productdiag',
-           'EINSUM_SUBSCRIPTS', 'einsum']  # noqa: F405
+           'EINSUM_SUBSCRIPTS', 'einsum',
+           '__version__', '__name__']
 
 if SEED is not None:               # pragma: no cover
     np_set_random_seed(SEED)

@@ -25,6 +25,12 @@ TL = np
 """'TensorLibrary'. The actual imported backend python package
 """
 
+name = TL.__name__
+"""The tensor library's name"""
+
+version = TL.__version__
+"""The tensor library's version"""
+
 
 DEVICE = 'cpu'
 """Current device"""

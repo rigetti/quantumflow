@@ -37,7 +37,7 @@ def print_versions(file: typing.TextIO = None) -> None:
     print('cvxpy      \t', cvx.__version__, file=file)
     print('pyquil      \t', pyquil.__version__, file=file)
 
-    print(bk.TL.__name__, '   \t', bk.TL.__version__, '(BACKEND)', file=file)
+    print(bk.name, '   \t', bk.version, '(BACKEND)', file=file)
 
 
 if __name__ == '__main__':

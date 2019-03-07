@@ -12,7 +12,7 @@ import subprocess
 
 import quantumflow as qf
 
-from . import ALMOST_ONE, tensorflow_only, eager_only
+from . import ALMOST_ONE, tensorflow_only, tensorflow2_only, eager_only
 
 
 def test_prepare_w4():
@@ -74,6 +74,12 @@ def test_fit_zyz():
 @tensorflow_only
 def test_fit_zyz_main():
     rval = subprocess.call(['examples/tensorflow_fit_gate.py'])
+    assert rval == 0
+
+
+@tensorflow2_only
+def test_fit_zyz_tf2():
+    rval = subprocess.call(['examples/tensorflow2_fit_gate.py'])
     assert rval == 0
 
 

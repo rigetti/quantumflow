@@ -39,8 +39,9 @@ if _LOGLEVEL is not None:
 
 # ==== Tensor Library Backend ====
 
+# FIXME: Should be in backend?
 DEFAULT_BACKEND = 'numpy'
-BACKENDS = ('tensorflow', 'eager', 'torch', 'numpy')
+BACKENDS = ('tensorflow', 'tensorflow2', 'eager', 'torch', 'numpy')
 
 # Environment variable override
 BACKEND = os.getenv(_PREFIX + 'BACKEND', DEFAULT_BACKEND)

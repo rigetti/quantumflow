@@ -35,6 +35,8 @@ assert DEVICE in {'cpu', 'gpu'}
 
 
 TL = tf
+name = TL.__name__
+version = TL.__version__
 
 
 # The effective maximum size is 28 qubits for a 16 GiB GPU (probably 29 qubits

@@ -24,6 +24,9 @@ The current options are tensorflow, eager, pytorch, and numpy (default).
 - tensorflow
     Regular tensorflow. Eager mode recommened.
 
+- tensorflow2
+    Tensorflow 2.x backend. Eager is now the default operation mode.
+
 - torch (Experimental)
     Experimental prototype. Fast on CPU and GPU. Unfortunately stochastic gradient
     decent not available due to pytorch's lack of support for complex math.

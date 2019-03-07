@@ -39,6 +39,8 @@ from .numpybk import astensor as np_astensor
 
 
 TL = torch
+name = TL.__name__
+version = TL.__version__
 
 CTYPE = np.complex128
 FTYPE = np.float64

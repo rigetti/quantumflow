@@ -22,7 +22,8 @@ __all__ = ['I', 'X', 'Y', 'Z', 'H', 'S', 'T', 'PHASE', 'RX', 'RY', 'RZ', 'CZ',
            'CNOT', 'SWAP', 'ISWAP', 'CPHASE00', 'CPHASE01', 'CPHASE10',
            'CPHASE', 'PSWAP', 'CCNOT', 'CSWAP',
            'RN', 'TX', 'TY', 'TZ', 'TH', 'ZYZ',
-           'CANONICAL', 'XX', 'YY', 'ZZ', 'PISWAP', 'EXCH',
+           'CAN', 'XX', 'YY', 'ZZ', 'PISWAP', 'EXCH',
+           'CANONICAL',
            'S_H', 'T_H', 'STDGATES']
 
 
@@ -267,7 +268,7 @@ class CZ(Gate):
     r"""A controlled-Z gate
 
     Equivalent to ``controlled_gate(Z())`` and locally equivalent to
-    ``CANONICAL(1/2,0,0)``
+    ``CAN(1/2,0,0)``
 
     .. math::
         \text{CZ}() = \begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\
@@ -291,7 +292,7 @@ class CNOT(Gate):
     r"""A controlled-not gate
 
     Equivalent to ``controlled_gate(X())``, and
-    locally equivalent to ``CANONICAL(1/2, 0, 0)``
+    locally equivalent to ``CAN(1/2, 0, 0)``
 
      .. math::
         \text{CNOT}() \equiv \begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\
@@ -314,7 +315,7 @@ class CNOT(Gate):
 class SWAP(Gate):
     r"""A 2-qubit swap gate
 
-    Locally equivalent to ``CANONICAL(1/2,1/2,1/2)``.
+    Locally equivalent to ``CAN(1/2,1/2,1/2)``.
 
     .. math::
         \text{SWAP}() \equiv
@@ -340,7 +341,7 @@ class SWAP(Gate):
 class ISWAP(Gate):
     r"""A 2-qubit iswap gate
 
-    Locally equivalent to ``CANONICAL(1/2,1/2,0)``.
+    Locally equivalent to ``CAN(1/2,1/2,0)``.
 
     .. math::
         \text{ISWAP}() \equiv
@@ -455,12 +456,13 @@ class CPHASE(Gate):
 
 class PSWAP(Gate):
     r"""A 2-qubit parametric-swap gate, as defined by Quil.
+    Interpolates between SWAP (theta=0) and iSWAP (theta=pi/2).
 
-    Locally equivalent to ``CANONICAL(1/2, 1/2, t)``
+    Locally equivalent to ``CAN(1/2, 1/2, 1/2 - theta/pi)``
 
     .. math::
         \text{PSWAP}(\theta) \equiv \begin{pmatrix} 1&0&0&0 \\
-        0&0&e^{i\phi}&0 \\ 0&e^{i\phi}&0&0 \\ 0&0&0&1 \end{pmatrix}
+        0&0&e^{i\theta}&0 \\ 0&e^{i\theta}&0&0 \\ 0&0&0&1 \end{pmatrix}
     """
     def __init__(self, theta: float,
                  q0: Qubit = 0, q1: Qubit = 1) -> None:
@@ -481,7 +483,7 @@ class PSWAP(Gate):
 class PISWAP(Gate):
     r"""A parametric iswap gate, generated from XY interaction.
 
-    Locally equivalent to CANONICAL(t,t,0), where t = theta / (2 * pi)
+    Locally equivalent to CAN(t,t,0), where t = theta / (2 * pi)
 
     .. math::
         \text{PISWAP}(\theta) \equiv
@@ -840,14 +842,14 @@ class ZYZ(Gate):
 
 # TODO: Add references and explanation
 # DOCME: Comment on sign conventions.
-class CANONICAL(Gate):
+class CAN(Gate):
     r"""A canonical 2-qubit gate
 
     The canonical decomposition of 2-qubits gates removes local 1-qubit
     rotations, and leaves only the non-local interactions.
 
     .. math::
-        \text{CANONICAL}(t_x, t_y, t_z) \equiv
+        \text{CAN}(t_x, t_y, t_z) \equiv
             \exp\Big\{-i\frac{\pi}{2}(t_x X\otimes X
             + t_y Y\otimes Y + t_z Z\otimes Z)\Big\}
 
@@ -867,17 +869,24 @@ class CANONICAL(Gate):
     @property
     def H(self) -> Gate:
         tx, ty, tz = self.params.values()
-        return CANONICAL(-tx, -ty, -tz, *self.qubits)
+        return CAN(-tx, -ty, -tz, *self.qubits)
 
     def __pow__(self, t: float) -> Gate:
         tx, ty, tz = self.params.values()
-        return CANONICAL(tx * t, ty * t, tz * t, *self.qubits)
+        return CAN(tx * t, ty * t, tz * t, *self.qubits)
+
+
+# Backwards compatability
+# TODO: Add deprecation warning
+class CANONICAL(CAN):
+    """Deprecated. Use class CAN instead"""
+    pass
 
 
 class XX(Gate):
     r"""A parametric 2-qubit gate generated from an XX interaction,
 
-    Equivalent to ``CANONICAL(t,0,0)``.
+    Equivalent to ``CAN(t,0,0)``.
 
     XX(1/2) is the Mølmer-Sørensen gate.
 
@@ -908,8 +917,8 @@ class XX(Gate):
 class YY(Gate):
     r"""A parametric 2-qubit gate generated from a YY interaction.
 
-    Equivalent to ``CANONICAL(0,t,0)``, and locally equivalent to
-    ``CANONICAL(t,0,0)``
+    Equivalent to ``CAN(0,t,0)``, and locally equivalent to
+    ``CAN(t,0,0)``
 
     Args:
         t:
@@ -935,14 +944,13 @@ class YY(Gate):
 class ZZ(Gate):
     r"""A parametric 2-qubit gate generated from a ZZ interaction.
 
-    Equivalent to ``CANONICAL(0,0,t)``, and locally equivalent to
-    ``CANONICAL(t,0,0)``
+    Equivalent to ``CAN(0,0,t)``, and locally equivalent to
+    ``CAN(t,0,0)``
 
     Args:
         t:
     """
     def __init__(self, t: float, q0: Qubit = 0, q1: Qubit = 1) -> None:
-        t = t % 4
         theta = bk.ccast(pi * t)
         unitary = [[[[bk.cis(-theta / 2), 0], [0, 0]],
                     [[0, bk.cis(theta / 2)], [0, 0]]],
@@ -963,11 +971,11 @@ class ZZ(Gate):
 class EXCH(Gate):
     r"""A 2-qubit parametric gate generated from an exchange interaction.
 
-    Equivalent to CANONICAL(t,t,t)
+    Equivalent to CAN(t,t,t)
 
     """
     def __init__(self, t: float, q0: Qubit = 0, q1: Qubit = 1) -> None:
-        unitary = CANONICAL(t, t, t).tensor
+        unitary = CAN(t, t, t).tensor
         super().__init__(unitary, [q0, q1], dict(t=t))
 
     @property
@@ -986,7 +994,7 @@ GATESET = frozenset([I, X, Y, Z, H, S, T, PHASE, RX, RY, RZ, CZ,
                      CPHASE, PSWAP, CCNOT, CSWAP, PISWAP,
                      # Extras
                      RN, TX, TY, TZ, TH, ZYZ,
-                     CANONICAL, XX, YY, ZZ, EXCH,
+                     CAN, XX, YY, ZZ, EXCH,
                      S_H, T_H])
 
 # TODO: Rename STDGATES to NAME_GATE?

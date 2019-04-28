@@ -12,15 +12,16 @@ import os
 import subprocess
 import tempfile
 
+
 import PIL
 import sympy
 
 from .qubits import Qubits
 from .gates import P0, P1
 from .stdgates import (I,  # X, Y, Z, H, T, S,
-                       T_H, S_H, RX, RY, RZ, TX, TY,
+                       T_H, S_H, RX, RY, RZ, TX, TY, TH,
                        TZ, CNOT, CZ, SWAP, ISWAP, CCNOT, CSWAP,
-                       XX, YY, ZZ)
+                       XX, YY, ZZ, CAN, CPHASE, PSWAP)
 from .stdops import Reset, Measure
 from .utils import symbolize
 from .circuits import Circuit
@@ -35,11 +36,12 @@ __all__ = ('LATEX_GATESET',
 
 # TODO: Should be set of types to match GATESET in stdgates?
 LATEX_GATESET = ['I', 'X', 'Y', 'Z', 'H', 'T', 'S', 'T_H', 'S_H', 'RX', 'RY',
-                 'RZ', 'TX', 'TY', 'TZ', 'CNOT', 'CZ', 'SWAP', 'ISWAP',
-                 'CCNOT', 'CSWAP', 'XX', 'YY', 'ZZ', 'P0', 'P1', 'RESET']
+                 'RZ', 'TX', 'TY', 'TZ', 'TH', 'CNOT', 'CZ', 'SWAP', 'ISWAP',
+                 'PSWAP', 'CCNOT', 'CSWAP', 'XX', 'YY', 'ZZ', 'CAN',
+                 'P0', 'P1', 'RESET']
 
-# TODO: Gates not yet supported by latex: PISWAP, PHASE, CANONICAL, CPHASE ...
-# Possibly convert unsupported gates to displayable gates.
+# TODO: Gates not yet supported by latex: PISWAP, PHASE ...
+# Possibly convert unsupported gates to displayable gates?
 
 
 def circuit_to_latex(circ: Circuit,
@@ -49,7 +51,7 @@ def circuit_to_latex(circ: Circuit,
     Create an image of a quantum circuit in LaTeX.
 
     Can currently draw X, Y, Z, H, T, S, T_H, S_H, RX, RY, RZ, TX, TY, TZ,
-    CNOT, CZ, SWAP, ISWAP, CCNOT, CSWAP, XX, YY, ZZ, P0 and P1 gates,
+    TH, CNOT, CZ, SWAP, ISWAP, CCNOT, CSWAP, XX, YY, ZZ, CAN, P0 and P1 gates,
     and the RESET operation.
 
     Args:
@@ -78,6 +80,15 @@ def circuit_to_latex(circ: Circuit,
     code = [r'\lstick{' + str(q) + r'}' for q in qubits]
     layer_code.append(code)
 
+    def _two_qubit_gate(top, bot, label):
+        if bot-top == 1:
+            code_top = r'\multigate{1}{%s}' % label
+            code_bot = r'\ghost{%s}' % label
+        else:
+            code_top = r'\sgate{%s}{%s}' % (label, str(bot - top))
+            code_bot = r'\gate{%s}' % (label)
+        return code_top, code_bot
+
     for layer in layers.elements:
         code = [r'\qw'] * N
         assert isinstance(layer, Circuit)
@@ -85,6 +96,7 @@ def circuit_to_latex(circ: Circuit,
             idx = [qubit_idx[q] for q in gate.qubits]
 
             name = gate.name
+
             if isinstance(gate, I):
                 pass
             elif(len(idx) == 1) and name in ['X', 'Y', 'Z', 'H', 'T', 'S']:
@@ -111,34 +123,58 @@ def circuit_to_latex(circ: Circuit,
             elif isinstance(gate, TZ):
                 t = _latex_format(gate.params['t'])
                 code[idx[0]] = r'\gate{Z^{%s}}' % t
+            elif isinstance(gate, TH):
+                t = _latex_format(gate.params['t'])
+                code[idx[0]] = r'\gate{H^{%s}}' % t
             elif isinstance(gate, CNOT):
                 code[idx[0]] = r'\ctrl{' + str(idx[1] - idx[0]) + '}'
                 code[idx[1]] = r'\targ'
             elif isinstance(gate, XX):
-                t = _latex_format(gate.params['t'])
-                d = idx[1] - idx[0]
-                code[idx[0]] = r'\gate{X\!X^{%s}} \qwx[%s]' % (t, d)
-                code[idx[1]] = r'\gate{X\!X^{%s}}' % t
+                label = r'X\!X^{%s}' % _latex_format(gate.params['t'])
+                top = min(idx)
+                bot = max(idx)
+                code[top], code[bot] = _two_qubit_gate(top, bot, label)
             elif isinstance(gate, YY):
-                t = _latex_format(gate.params['t'])
-                d = idx[1] - idx[0]
-                code[idx[0]] = r'\gate{Y\!Y^{%s}} \qwx[%s]' % (t, d)
-                code[idx[1]] = r'\gate{Y\!Y^{%s}}' % t
+                label = r'Y\!Y^{%s}' % _latex_format(gate.params['t'])
+                top = min(idx)
+                bot = max(idx)
+                code[top], code[bot] = _two_qubit_gate(top, bot, label)
             elif isinstance(gate, ZZ):
-                t = _latex_format(gate.params['t'])
-                d = idx[1] - idx[0]
-                code[idx[0]] = r'\gate{Z\!Z^{%s}} \qwx[%s]' % (t, d)
-                code[idx[1]] = r'\gate{Z\!Z^{%s}}' % t
+                label = r'Z\!Z^{%s}' % _latex_format(gate.params['t'])
+                top = min(idx)
+                bot = max(idx)
+                code[top], code[bot] = _two_qubit_gate(top, bot, label)
+            elif isinstance(gate, CPHASE):
+                theta = _latex_format(gate.params['theta'])
+                label = r'\text{CPHASE}({%s})' % theta
+                top = min(idx)
+                bot = max(idx)
+                code[top], code[bot] = _two_qubit_gate(top, bot, label)
+            elif isinstance(gate, PSWAP):
+                theta = _latex_format(gate.params['theta'])
+                label = r'\text{PSWAP}({%s})' % theta
+                top = min(idx)
+                bot = max(idx)
+                code[top], code[bot] = _two_qubit_gate(top, bot, label)
             elif isinstance(gate, CZ):
                 code[idx[0]] = r'\ctrl{' + str(idx[1] - idx[0]) + '}'
                 code[idx[1]] = r'\ctrl{' + str(idx[0] - idx[1]) + '}'
             elif isinstance(gate, SWAP):
                 code[idx[0]] = r'\qswap \qwx[' + str(idx[1] - idx[0]) + ']'
                 code[idx[1]] = r'\qswap'
+            elif isinstance(gate, CAN):
+                tx = _latex_format(gate.params['tx'])
+                ty = _latex_format(gate.params['ty'])
+                tz = _latex_format(gate.params['tz'])
+                label = r'{\text{CAN}(%s, %s, %s)}' % (tx, ty, tz)
+                top = min(idx)
+                bot = max(idx)
+                code[top], code[bot] = _two_qubit_gate(top, bot, label)
             elif isinstance(gate, ISWAP):
-                code[idx[0]] = r'\sgate{\scriptstyle \text{iSWAP}}{' \
-                               + str(idx[1] - idx[0]) + '}'
-                code[idx[1]] = r'\gate{\scriptstyle \text{iSWAP}}'
+                label = r'{ \text{iSWAP}}'
+                top = min(idx)
+                bot = max(idx)
+                code[top], code[bot] = _two_qubit_gate(top, bot, label)
             elif isinstance(gate, CCNOT):
                 code[idx[0]] = r'\ctrl{' + str(idx[1]-idx[0]) + '}'
                 code[idx[1]] = r'\ctrl{' + str(idx[2]-idx[1]) + '}'
@@ -187,7 +223,7 @@ _DOCUMENT_HEADER = r"""
 \begin{document}
 """
 
-_QCIRCUIT = r"""\Qcircuit @C=1em @R=.7em {
+_QCIRCUIT = r"""\Qcircuit @C=1.5em @R=1.5em {
 %s
 }"""
 

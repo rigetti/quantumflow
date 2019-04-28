@@ -295,6 +295,11 @@ def test_gates_evolve():
     qf.H(0).evolve(rho0)
 
 
+def test_su():
+    su = qf.SWAP(0, 1).su()
+    assert np.linalg.det(qf.asarray(su.asoperator())) == ALMOST_ONE
+
+
 # TODO: Move elsewhere
 def test_reset():
     reset = qf.Reset(0, 1, 2)

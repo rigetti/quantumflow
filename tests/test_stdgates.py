@@ -308,11 +308,11 @@ def test_inverse_tgates_2qubit():
             assert type(g) == type(inv)
 
 
-def test_CANONICAL():
+def test_CAN():
     t1 = random.uniform(-2, +2)
     t2 = random.uniform(-2, +2)
     t3 = random.uniform(-2, +2)
-    gate = qf.CANONICAL(t1, t2, t3)
+    gate = qf.CAN(t1, t2, t3)
     assert qf.almost_unitary(gate)
     inv = gate.H
     assert type(gate) == type(inv)

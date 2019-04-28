@@ -40,14 +40,14 @@ def test_gates_to_latex():
     circ += qf.T_H(7)
 
     circ += qf.RX(-0.5*pi, 0)
-    circ += qf.RY(0.5*pi, 1)
-    circ += qf.RZ((1/3)*pi, 1)
-    circ += qf.RY(0.222, 1)
+    circ += qf.RY(0.5*pi, 4)
+    circ += qf.RZ((1/3)*pi, 5)
+    circ += qf.RY(0.222, 6)
 
     circ += qf.TX(0.5, 0)
-    circ += qf.TY(0.5, 1)
-    circ += qf.TZ(0.4, 1)
-
+    circ += qf.TY(0.5, 2)
+    circ += qf.TZ(0.4, 2)
+    circ += qf.TH(0.5, 3)
     circ += qf.TZ(0.47276, 1)
     # Gate with cunning hack
     gate = qf.RZ(0.4, 1)
@@ -56,9 +56,11 @@ def test_gates_to_latex():
 
     circ += qf.CNOT(1, 2)
     circ += qf.CNOT(2, 1)
+    circ += qf.I(*range(8))
+    circ += qf.ISWAP(4, 2)
+    circ += qf.ISWAP(6, 5)
     circ += qf.CZ(1, 3)
     circ += qf.SWAP(1, 5)
-    circ += qf.ISWAP(4, 2)
 
     # circ += qf.Barrier(0, 1, 2, 3, 4, 5, 6)  # Not yet supported
 
@@ -75,17 +77,24 @@ def test_gates_to_latex():
     # circ += qf.Reset()    # FIXME. Should fail with clear error message
 
     circ += qf.XX(0.25, 1, 3)
+    circ += qf.XX(0.25, 1, 2)
     circ += qf.YY(0.75, 1, 3)
     circ += qf.ZZ(1/3, 3, 1)
 
+    circ += qf.CPHASE(0, 5, 6)
+    circ += qf.CPHASE(pi*1/2, 0, 4)
+
+    circ += qf.CAN(1/3, 1/2, 1/2, 0, 1)
+    circ += qf.CAN(1/3, 1/2, 1/2, 2, 4)
+    circ += qf.CAN(1/3, 1/2, 1/2, 6, 5)
     circ += qf.Measure(0)
 
-    latex = qf.circuit_to_latex(circ)
+    circ += qf.PSWAP(pi/2, 6, 7)
 
-    print(latex)
+    qf.circuit_to_latex(circ)
+
+    # latex = qf.circuit_to_latex(circ)
     # qf.render_latex(latex).show()
-
-    # qf.circuit_to_image(circ)
 
 
 @skip_unless_pdflatex

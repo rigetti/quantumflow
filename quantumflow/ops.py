@@ -251,6 +251,13 @@ class Gate(Operation):
 
         return Channel(tensor, self.qubits)
 
+    def su(self) -> 'Gate':
+        """Convert gate tensor to the special unitary group."""
+        rank = 2**self.qubit_nb
+        U = asarray(self.asoperator())
+        U /= np.linalg.det(U) ** (1/rank)
+        return Gate(tensor=U, qubits=self.qubits)
+
 
 # End class Gate
 

@@ -46,7 +46,7 @@ BACKENDS = ('tensorflow', 'tensorflow2', 'eager', 'torch', 'numpy')
 # Environment variable override
 BACKEND = os.getenv(_PREFIX + 'BACKEND', DEFAULT_BACKEND)
 if BACKEND not in BACKENDS:  # pragma: no cover
-    raise ValueError('Unknown backend: QF_BACKEND={}'.format(BACKEND))
+    raise ValueError('Unknown backend: {}BACKEND={}'.format(_PREFIX, BACKEND))
 logging.getLogger(__name__).info("QuantumFlow Backend: %s", BACKEND)
 
 

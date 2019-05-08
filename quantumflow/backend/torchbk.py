@@ -40,7 +40,7 @@ from .numpybk import astensor as np_astensor
 
 TL = torch
 name = TL.__name__
-version = TL.__version__
+version = TL.__version__                                        # type: ignore
 
 CTYPE = np.complex128
 FTYPE = np.float64
@@ -52,9 +52,9 @@ DEVICE = os.getenv('QUANTUMFLOW_DEVICE', DEFAULT_DEVICE)
 assert DEVICE in {'cpu', 'gpu'}
 
 if DEVICE == 'cpu':
-    _DTYPE = torch.DoubleTensor
+    _DTYPE = torch.DoubleTensor                                 # type: ignore
 else:
-    _DTYPE = torch.cuda.DoubleTensor
+    _DTYPE = torch.cuda.DoubleTensor                            # type: ignore
 
 # Maximum tensor dimensions in pytorch is only 24!
 MAX_QUBITS = 24
@@ -72,9 +72,9 @@ def astensor(array: TensorLike) -> BKTensor:
 
     array = np_astensor(array)
     array = np.stack((array.real, array.imag))
-    tensor = torch.from_numpy(array)
-    if DEVICE == 'gpu':
-        tensor = tensor.cuda()
+    tensor = _DTYPE(array)                                      # type: ignore
+    # if DEVICE == 'gpu':
+    #    tensor = tensor.cuda()
 
     assert isinstance(tensor, _DTYPE)
 
@@ -122,8 +122,7 @@ def absolute(tensor: BKTensor) -> BKTensor:
         return math.sqrt(tensor[0]**2 + tensor[1]**2)
 
     new_real = torch.sqrt(tensor[0]**2 + tensor[1]**2)
-    new_imag = torch.zeros(*new_real.shape)
-    new_imag = new_imag.type(_DTYPE)
+    new_imag = torch.zeros(*new_real.shape, dtype=torch.double)
 
     return torch.stack((new_real, new_imag))
 
@@ -154,7 +153,7 @@ def inner(tensor0: BKTensor, tensor1: BKTensor) -> BKTensor:
            torch.matmul(tensor0_real, tensor1_imag)
            - torch.matmul(tensor0_imag, tensor1_real))
 
-    return _DTYPE(res)
+    return torch.stack(res)
 
 
 def outer(tensor0: BKTensor, tensor1: BKTensor) -> BKTensor:
@@ -189,7 +188,7 @@ def transpose(tensor: BKTensor, perm: typing.Sequence = None) -> BKTensor:
 
 
 def diag(tensor: BKTensor) -> BKTensor:
-    return torch.stack(torch.diag(tensor[0]), torch.diag(tensor[1]))
+    return torch.stack([torch.diag(tensor[0]), torch.diag(tensor[1])])
 
 
 def reshape(tensor: BKTensor, shape: list) -> BKTensor:
@@ -206,7 +205,7 @@ def matmul(tensor0: BKTensor, tensor1: BKTensor) -> BKTensor:
     return torch.stack((new_real, new_imag))
 
 
-def trace(tensor: BKTensor) -> complex:
+def trace(tensor: BKTensor) -> BKTensor:
     new_real = torch.trace(tensor[0])
     new_imag = torch.trace(tensor[1])
     return torch.stack((new_real, new_imag))

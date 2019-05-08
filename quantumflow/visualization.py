@@ -7,7 +7,7 @@
 QuantumFlow: Visualizations of quantum circuits,
 """
 
-from typing import Any
+from typing import Any, Tuple
 import os
 import subprocess
 import tempfile
@@ -80,7 +80,7 @@ def circuit_to_latex(circ: Circuit,
     code = [r'\lstick{' + str(q) + r'}' for q in qubits]
     layer_code.append(code)
 
-    def _two_qubit_gate(top, bot, label):
+    def _two_qubit_gate(top: int, bot: int, label: str) -> Tuple[str, str]:
         if bot-top == 1:
             code_top = r'\multigate{1}{%s}' % label
             code_bot = r'\ghost{%s}' % label
